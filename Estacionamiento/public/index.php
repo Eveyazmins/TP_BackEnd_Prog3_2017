@@ -10,10 +10,11 @@ $app->get('/hello/{name}', function (Request $request, Response $response) {
     $response->getBody()->write("Hello, $name");
 
     return $response;
+
+    
+
+
+
+
 });
-
-
-
-
-
 $app->run();
