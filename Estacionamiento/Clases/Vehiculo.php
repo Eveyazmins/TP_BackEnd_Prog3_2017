@@ -3,6 +3,7 @@
 include_once "Cochera.php";
 include_once "Registro_autos.php";
 include_once "usuario.php";
+require_once 'AccesoDatos.php';
 
 class Vehiculo
 {
@@ -64,7 +65,7 @@ class Vehiculo
 
     #FUNCIONES DB --------------------------------------------------------------------
 
-    #INSERTAR AUTO EN DB
+    #INSERTAR VEHICULO EN DB
     
     public static function IngresarAuto($vehiculo)
 	{
@@ -72,34 +73,50 @@ class Vehiculo
 		if( $patente != FALSE)
 		{
             $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-            $consulta = $objetoAccesoDato->RetornarConsulta("INSERT into Vehiculo (id_cochera,patente,marca,color,hora,fecha) values (:patente,:fecha,:hora) ");
-			
-			$db = $pdo->prepare("INSERT INTO autos (id_lugar,patente,marca,color,hora)VALUES(:idLugar,:patente,:marca,:color,:hora)");
-			$db->bindValue(':patente',$patente);
-			$db->bindValue(':marca',$obj->GetMarca());
-			$db->bindValue(':color',$obj->GetColor());
-			$db->bindValue(':hora',$obj->GetHora());
-			$db->bindValue(':idLugar',$obj->GetId());
-			if($db->execute() && Lugares::OcuparLugar($obj->GetId()))
-				{
-					$resultado = Vehiculo::TablaEstacionados();
-				}
+            $consulta = $objetoAccesoDato->RetornarConsulta("INSERT into Vehiculo (id_cochera,patente,marca,color,hora,fecha) values (:idCochera,:patente,:marca,:color,:hora,:fecha)"); 			
+			$consulta->bindValue('idCochera',$vehiculo->_idCochera, PDO::PARAM_STR); 
+			$consulta->bindValue(':patente',$vehiculo->_patente, PDO::PARAM_STR);
+			$consulta->bindValue('marca',$vehiculo->_marca, PDO::PARAM_STR);
+			$consulta->bindValue('color',$vehiculo->_color, PDO::PARAM_STR);
+			$consulta->bindValue(':fecha',$vehiculo->_fecha, PDO::PARAM_STR);
+			$consulta->bindValue(':hora',$vehiculo->_hora, PDO::PARAM_STR);
+			$consulta->execute();
+
+			Cochera::OcuparLugar($obj->GetId());
+			//$resultado = Vehiculo::TablaEstacionados();
+			$resultado = $objetoAccesoDato->RetornarUltimoIdInsertado();	
 		}
 		else
 		{
-			$resultado = "errorpat";
+			$resultado = "Patente no valida";
 		}
 		return $resultado;		
 	}
-    
-    
-    $consulta->bindValue(':patente',$vehiculo->patente, PDO::PARAM_STR);
-    $consulta->bindValue(':fecha',$vehiculo->fecha, PDO::PARAM_STR);
-    $consulta->bindValue(':hora',$vehiculo->hora, PDO::PARAM_STR);
-    $consulta->execute();
-    return $objetoAccesoDato->RetornarUltimoIdInsertado();
 
+	#ELIMINAR VEHICULO EN DB
+	
+	public static function RetirarAuto($patente)
+	{
+		$objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
+		$consulta = $objetoAccesoDato->RetornarConsulta("SELECT * FROM Vehiculo WHERE patente = :patente");			
+		$consulta->execute();
+		$resultado = $consulta->rowCount();
 
+		$consulta = $objetoAccesoDato->RetornarConsulta("DELETE FROM Vehiculo WHERE patente = :patente");
+		$consulta->bindValue(':patente',$patente);
+		$consulta->execute();
+
+		$resultado = $resultado - $consulta->rowCount();
+		
+		if($resultado != 0)
+		{
+			return "Cantidad filas modificadas = ".$resultado;
+		}
+
+		//Cochera::LiberarLugar($id);
+	}
+
+    
 
 
 
