@@ -62,8 +62,7 @@ class Cochera
 	{
 		$resultado = false;
 		$objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-		$consulta = $objetoAccesoDato->RetornarConsulta("UPDATE Cochera SET ocupado=:ocupado WHERE id_cochera=:idCochera"); 			
-		$consulta->bindValue('idCochera',$vehiculo->_idCochera, PDO::PARAM_STR);
+		$consulta = $objetoAccesoDato->RetornarConsulta("UPDATE Cochera SET ocupado=:ocupado WHERE id_cochera=:idCochera");
 		$consulta->bindValue(':ocupado',false);
 		$consulta->bindValue(':idCochera',$id);
 		if($consulta->execute())
@@ -91,6 +90,69 @@ class Cochera
 		}
 		echo $datos;
 	}
+
+	#CARGA COCHERAS ----------------------------------------------------------------------------------------------------------
+
+	//ver de acuerdo a lo que se pide en el enunciado
+
+	public static function PrimerUso()
+	{
+		$resultado = "ErrorCarga";
+		$objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
+		$consulta = $objetoAccesoDato->RetornarConsulta("INSERT INTO Cochera (piso,id_cochera,ocupado,discapacitado)VALUES(:piso,:idCochera,:ocupado,:discapacitado)");
+		$piso1 = 100;
+		$piso2 = 200;
+		$piso3 = 300;
+		for ($i = 1 ; $i <= 30 ; $i++)
+		{
+			if($i < 4)
+			{
+				$consulta->bindValue(':discapacitado',true);
+			}else
+			{
+				$consulta->bindValue(':discapacitado',false);
+			}
+			$num = $piso1+$i;
+			$consulta->bindValue(':piso',1);
+			$consulta->bindParam(':idCochera',$num);
+			$consulta->bindValue(':ocupado',false);
+			$resultado=$consulta->execute();
+		}
+		for ($i = 1 ; $i <= 30 ; $i++)
+		{
+			if($i < 4)
+			{
+				$consulta->bindValue(':discapacitado',true);
+			}else
+			{
+				$consulta->bindValue(':discapacitado',false);
+			}
+			$num = $piso2+$i;
+			$consulta->bindValue(':piso',2);
+			$consulta->bindValue(':idCochera',$num);
+			$consulta->bindValue(':ocupado',false);
+			$resultado=$consulta->execute();
+		}
+		for ($i = 1 ; $i <= 30 ; $i++)
+		{
+			if($i < 4)
+			{
+				$consulta->bindValue(':discapacitado',true);
+			}else
+			{
+				$consulta->bindValue(':discapacitado',false);
+			}
+			$num = $piso3+$i;
+			$consulta->bindValue(':piso',3);
+			$consulta->bindValue(':idCochera',$num);
+			$consulta->bindValue(':ocupado',false);
+			$resultado=$consulta->execute();
+		}
+		return $resultado;
+	}
+
+
+
 
 	
 
