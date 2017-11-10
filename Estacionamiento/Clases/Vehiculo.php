@@ -13,16 +13,19 @@ class Vehiculo
 	private $_patente;
 	private $_marca;
     private $_horaIngreso;
-    private $_fechaIngreso;
+	private $_fechaIngreso;
+	private $_tipoCochera;
 
 	#CONSTRUCTOR---------------------------------------------------------------------
-	function __construct($patente,$idCochera,$marca=null,$color=null,$hora=null,$fecha=null)
+	function __construct($patente,$idCochera,$marca=null,$color=null,$hora=null,$fecha=null,$tipoCochera)
 	{
 		$this->_patente = $patente;
 		$this->_color = $color;
 		$this->_marca = $marca;
 		$this->_idCochera = $idCochera;
 		$this->_horaIngreso = $hora;
+		$this->_fechaIngreso = $fecha;
+		$this->_tipoCochera = $tipoCochera;
 	}
 
 	#GETTERS Y SETTERS---------------------------------------------------------------
@@ -61,7 +64,17 @@ class Vehiculo
 	public function SetMarca($marca)
 	{
 		$this->_marca = $marca;
-    }
+	}
+	
+	#--------------------------------------------------------------------------------
+	public function GetTipoCochera()
+	{
+		return $this->_tipoCochera;
+	}
+	public function SetTipoCochera($tipoCochera)
+	{
+		$this->_tipoCochera = $tipoCochera;
+	}
 
     #FUNCIONES DB ---------------------------------------------------------------------------------------------------
 
